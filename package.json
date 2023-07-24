@@ -1,14 +1,21 @@
 {
-  "name": "avaliacao_final_introducao_ao_back_end",
+  "name": "atividadepraticajs-crudnodejs",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "index": "node index.js",
+    "dev": "nodemon index.js"
   },
+  "keywords": [],
   "author": "",
+  "type": "module",
   "license": "ISC",
   "dependencies": {
     "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
   }
 }
