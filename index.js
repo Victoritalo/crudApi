@@ -130,12 +130,13 @@ app.delete("/:userId/:messageId", (req, res) => {
         "User does not exist or has no permission to access this message",
     });
   } else {
-    const findMessage = findUser.userMsgs.find((message) => {
+    const findMessage = findUser.userMsgs.findIndex((message) => {
       return message.messageId === messageId;
     });
 
-    if (!findMessage) {
+    if (findMessage < 0) {
       res.status(404).json({ error: "Message does not exist" });
+      return
     } else {
       findUser.userMsgs.splice(findMessage, 1);
     }
