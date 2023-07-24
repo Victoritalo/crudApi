@@ -13,7 +13,7 @@ app.post("/signup", (req, res) => {
 
   if (emailExists) {
     res.status(400);
-    res.send("Email already registered by another user!");
+    res.send({error: "Email already registered by another user!"});
     return;
   } else {
     const newUser = {
@@ -48,7 +48,7 @@ app.get("/login", (req, res) => {
       Messages: verifyUser.userMsgs,
     });
   } else {
-    res.status(400).json({ message: "Wrong credentials!" });
+    res.status(400).json({ error: "Wrong credentials!" });
     return;
   }
 });
@@ -61,7 +61,7 @@ app.post("/:userId", (req, res) => {
   });
 
   if (!findUser) {
-    res.status(404).json({ message: "User not found!" });
+    res.status(404).json({ error: "User not found!" });
     return;
   } else {
     const newMessage = {
@@ -88,7 +88,7 @@ app.put("/:userId/:messageId", (req, res) => {
 
   if (!findUser) {
     res.status(404).json({
-      message:
+      error:
         "User does not exist or has no permission to access this message",
     });
     return;
@@ -98,7 +98,7 @@ app.put("/:userId/:messageId", (req, res) => {
     });
 
     if (!findMessage) {
-      res.status(404).json({ message: "Message does not exist" });
+      res.status(404).json({ error: "Message does not exist" });
       return;
     } else {
       const updateTitle = req.body.title;
@@ -134,10 +134,10 @@ app.delete("/:userId/:messageId", (req, res) => {
       res.status(404).json({ error: "Message does not exist" });
     } else {
       findUser.userMsgs.splice(findMessage, 1);
-      res
-        .status(200)
-        .json({ user: findUser.userName, message: findUser.userMsgs });
     }
+    res
+      .status(200)
+      .json({ user: findUser.userName, message: findUser.userMsgs });
   }
 });
 
