@@ -6,6 +6,10 @@ const usersData = [];
 let userUniqueId = 0;
 let userMsgId = 2345234;
 
+app.get("", (req, res) => {
+  res.send("Hello! :)")
+})
+
 app.post("/signup", (req, res) => {
   const emailExists = usersData.some((user) => {
     return req.body.userEmail === user.userEmail;
