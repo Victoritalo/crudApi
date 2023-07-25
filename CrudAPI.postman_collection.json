@@ -1,0 +1,124 @@
+{
+  "info": {
+    "_postman_id": "4446eafa-6d27-499f-a8f0-f26502e6b560",
+    "name": "AtividadeCrud API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+    "_exporter_id": "28387762"
+  },
+  "item": [
+    {
+      "name": "User Register",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"userEmail\": \"login@user.com\",\r\n    \"userName\": \"John Doe\",\r\n    \"userPass\": \"ABC123\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "https://crud-api-wkqg.onrender.com/signup"
+      },
+      "response": []
+    },
+    {
+      "name": "Show all users",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "https://crud-api-wkqg.onrender.com/users"
+      },
+      "response": []
+    },
+    {
+      "name": "User Login",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"userEmail\": \"login@user.com\",\r\n    \"userPass\": \"ABC123\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "https://crud-api-wkqg.onrender.com/login"
+      },
+      "response": []
+    },
+    {
+      "name": "Add user message",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"title\": \"User 0\",\r\n    \"message\": \"Mensagem desatualizada\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://crud-api-wkqg.onrender.com/0",
+          "protocol": "https",
+          "host": ["crud-api-wkqg", "onrender", "com"],
+          "path": ["0"],
+          "query": [
+            {
+              "key": "userMsgs",
+              "value": "Message%201",
+              "disabled": true
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update Message",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"title\": \"User 0 Atualizado\",\r\n    \"message\": \"Mensagem atualizada!\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "https://crud-api-wkqg.onrender.com/0/2345234"
+      },
+      "response": []
+    },
+    {
+      "name": "Delete Message",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "https://crud-api-wkqg.onrender.com/0/2345234"
+      },
+      "response": []
+    }
+  ]
+}

@@ -7,8 +7,16 @@ let userUniqueId = 0;
 let userMsgId = 2345234;
 
 app.get("", (req, res) => {
-  res.send("Hello! :)")
-})
+  const httpResponse =
+    "Welcome to my Node API Crud!\n" +
+    "We're currently working without a proper backend database,\n" +
+    "meaning that this APP is 100% client side and we're not saving any of your provided info on any request.\n\n" +
+    "We suggest using Postman for a better experience and test. \n" +
+    "Check my repository and download Postman config: https://github.com/Victoritalo/crudApi";
+
+  res.set("Content-Type", "text/plain");
+  res.send(httpResponse);
+});
 
 app.post("/signup", (req, res) => {
   const emailExists = usersData.some((user) => {
@@ -17,7 +25,7 @@ app.post("/signup", (req, res) => {
 
   if (emailExists) {
     res.status(400);
-    res.send({error: "Email already registered by another user!"});
+    res.send({ error: "Email already registered by another user!" });
     return;
   } else {
     const newUser = {
@@ -92,8 +100,7 @@ app.put("/:userId/:messageId", (req, res) => {
 
   if (!findUser) {
     res.status(404).json({
-      error:
-        "User does not exist or has no permission to access this message",
+      error: "User does not exist or has no permission to access this message",
     });
     return;
   } else {
@@ -136,7 +143,7 @@ app.delete("/:userId/:messageId", (req, res) => {
 
     if (findMessage < 0) {
       res.status(404).json({ error: "Message does not exist" });
-      return
+      return;
     } else {
       findUser.userMsgs.splice(findMessage, 1);
     }
