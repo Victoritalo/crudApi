@@ -40,7 +40,11 @@ app.post("/signup", (req, res) => {
     };
     userUniqueId++;
     usersData.push(newUser);
-    res.status(200).json(usersData);
+    res.status(200).json({
+      userEmail: newUser.userEmail, 
+      userName: newUser.userName,
+      userId: newUser.userId,
+    });
   }
 });
 
