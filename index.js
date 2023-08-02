@@ -1,6 +1,9 @@
 import express from "express";
+import cross from "cors"
+
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 const usersData = [];
 let userUniqueId = 0;
