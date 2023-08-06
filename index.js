@@ -25,18 +25,13 @@ app.post("/signup", (req, res) => {
   const emailExists = usersData.some((user) => {
     return req.body.userEmail === user.userEmail;
   });
-  if (
-    req.body.userEmail == "" ||
-    req.body.userName == "" ||
-    req.body.userPass == ""
-  ) {
-    return res.status(403).json({
-      error: `Please fill in the fields!`,
-    });
-  } else if (emailExists) {
-    res
-      .status(409)
-      .json({ error: "Email already registered by another user!" });
+  if (req.body.userEmail == "" ||req.body.userName == "" ||req.body.userPass == "") {
+    return res.status(403).json({ error: `Please fill in the fields`});
+  } else if (req.body.userPass !== req.body.confirmPassword) {
+    res.status(401).json({ error: "Passwords do not match" });
+    return
+  }else if (emailExists) {
+    res.status(409).json({ error: "Email already registered by another user!" });
     return;
   } else {
     const newUser = {
@@ -87,7 +82,7 @@ app.post("/login", (req, res) => {
       message: "Login successful!",
       name: verifyUser.userName,
       userID: verifyUser.userId,
-      Messages: verifyUser.userMsgs,
+      messages: verifyUser.userMsgs,
     });
   } else if(verifyUser === undefined) {
     res.status(400).json({ error: "Wrong credentials!" });
