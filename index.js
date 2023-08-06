@@ -1,5 +1,5 @@
 import express from "express";
-import cors from "cors"
+import cors from "cors";
 
 const app = express();
 app.use(express.json());
@@ -25,10 +25,18 @@ app.post("/signup", (req, res) => {
   const emailExists = usersData.some((user) => {
     return req.body.userEmail === user.userEmail;
   });
-
-  if (emailExists) {
-    res.status(400);
-    res.send({ error: "Email already registered by another user!" });
+  if (
+    req.body.userEmail == "" ||
+    req.body.userName == "" ||
+    req.body.userPass == ""
+  ) {
+    return res.status(403).json({
+      error: `Please fill in the fields!`,
+    });
+  } else if (emailExists) {
+    res
+      .status(409)
+      .json({ error: "Email already registered by another user!" });
     return;
   } else {
     const newUser = {
@@ -41,7 +49,8 @@ app.post("/signup", (req, res) => {
     userUniqueId++;
     usersData.push(newUser);
     res.status(200).json({
-      userEmail: newUser.userEmail, 
+      message: "User created successfully!",
+      userEmail: newUser.userEmail,
       userName: newUser.userName,
       userId: newUser.userId,
     });
@@ -49,10 +58,24 @@ app.post("/signup", (req, res) => {
 });
 
 app.get("/users", (req, res) => {
-  res.status(200).json({ UsersList: usersData });
+  const usersInfo = usersData.map((user) => {
+    return {
+      name: user.userName,
+      id: user.userId,
+      email: user.userEmail,
+      messages: user.userMsgs,
+    };
+  });
+
+  if (usersInfo.length === 0) {
+    res.status(404).json({ error: "No users found!" });
+    return;
+  } else {
+    res.status(200).json({ UsersList: usersInfo });
+  }
 });
 
-app.get("/login", (req, res) => {
+app.post("/login", (req, res) => {
   const verifyUser = usersData.find((user) => {
     return (
       user.userEmail === req.body.userEmail &&
@@ -66,7 +89,7 @@ app.get("/login", (req, res) => {
       userID: verifyUser.userId,
       Messages: verifyUser.userMsgs,
     });
-  } else {
+  } else if(verifyUser === undefined) {
     res.status(400).json({ error: "Wrong credentials!" });
     return;
   }
