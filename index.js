@@ -5,8 +5,42 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-const usersData = [];
-let userUniqueId = 0;
+const usersData = [
+  // {
+  //   userEmail: "login@user.com",
+  //   userId: 999,
+  //   userMsgs: [
+  //     {
+  //       messageId: 1,
+  //       title: "Hello World",
+  //       message: "Welcomeeeeee",
+  //     },
+  //     {
+  //       messageId: 2,
+  //       title: "Hello World 2",
+  //       message: "Welcomeeeeee 2",
+  //     },
+  //     {
+  //       messageId: 3,
+  //       title: "Hello World 2",
+  //       message: "Welcomeeeeee 2",
+  //     },
+  //     {
+  //       messageId: 4,
+  //       title: "Hello World 2",
+  //       message: "Welcomeeeeee 2",
+  //     },
+  //     {
+  //       messageId: 5,
+  //       title: "Hello World 2",
+  //       message: "Welcomeeeeee 2",
+  //     },
+  //   ],
+  //   userName: "John Doe",
+  //   userPass: "123",
+  // },
+];
+let userUniqueId = 999;
 let userMsgId = 2345234;
 
 app.get("", (req, res) => {
@@ -45,7 +79,28 @@ app.post("/signup", (req, res) => {
       userName: req.body.userName,
       userPass: req.body.userPass,
       userId: userUniqueId,
-      userMsgs: [],
+      userMsgs: [
+        {
+          messageId: 1,
+          title: "Hello World 1",
+          message: "Lorem, ipsum dolor sit amet consectetur adipisicing elit.",
+        },
+        {
+          messageId: 2,
+          title: "Hello World 2",
+          message: "Lorem, ipsum dolor sit amet consectetur adipisicing elit.",
+        },
+        {
+          messageId: 3,
+          title: "Hello World 3",
+          message: "Lorem, ipsum dolor sit amet consectetur adipisicing elit.",
+        },
+        {
+          messageId: 4,
+          title: "Hello World 4",
+          message: "Lorem, ipsum dolor sit amet consectetur adipisicing elit.",
+        },
+      ],
     };
     userUniqueId++;
     usersData.push(newUser);
@@ -57,22 +112,24 @@ app.post("/signup", (req, res) => {
     });
   }
 });
-
-app.get("/users", (req, res) => {
-  const usersInfo = usersData.map((user) => {
-    return {
-      name: user.userName,
-      id: user.userId,
-      email: user.userEmail,
-      messages: user.userMsgs,
-    };
+//logged user
+app.get("/:userId", (req, res) => {
+  const userId = parseInt(req.params.userId);
+  console.log(userId);
+  const usersInfo = usersData.find((user) => {
+    return userId === user.userId;
   });
 
-  if (usersInfo.length === 0) {
+  if (!usersInfo) {
     res.status(404).json({ error: "No users found!" });
     return;
   } else {
-    res.status(200).json({ UsersList: usersInfo });
+    res.status(200).json({
+      userid: usersInfo.userId,
+      email: usersInfo.userEmail,
+      name: usersInfo.userName,
+      messages: usersInfo.userMsgs,
+    });
   }
 });
 
@@ -87,7 +144,7 @@ app.post("/login", (req, res) => {
     res.status(200).json({
       message: "Login successful!",
       name: verifyUser.userName,
-      userID: verifyUser.userId,
+      userId: verifyUser.userId,
       messages: verifyUser.userMsgs,
     });
   } else if (verifyUser === undefined) {
@@ -97,7 +154,7 @@ app.post("/login", (req, res) => {
 });
 
 //Create Message
-app.post("/:userId", (req, res) => {
+app.post("/:userId/message", (req, res) => {
   const userId = parseInt(req.params.userId);
   const findUser = usersData.find((user) => {
     return user.userId === userId;
