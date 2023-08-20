@@ -5,41 +5,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-const usersData = [
-  // {
-  //   userEmail: "login@user.com",
-  //   userId: 999,
-  //   userMsgs: [
-  //     {
-  //       messageId: 1,
-  //       title: "Hello World",
-  //       message: "Welcomeeeeee",
-  //     },
-  //     {
-  //       messageId: 2,
-  //       title: "Hello World 2",
-  //       message: "Welcomeeeeee 2",
-  //     },
-  //     {
-  //       messageId: 3,
-  //       title: "Hello World 2",
-  //       message: "Welcomeeeeee 2",
-  //     },
-  //     {
-  //       messageId: 4,
-  //       title: "Hello World 2",
-  //       message: "Welcomeeeeee 2",
-  //     },
-  //     {
-  //       messageId: 5,
-  //       title: "Hello World 2",
-  //       message: "Welcomeeeeee 2",
-  //     },
-  //   ],
-  //   userName: "John Doe",
-  //   userPass: "123",
-  // },
-];
+const usersData = [];
 let userUniqueId = 999;
 let userMsgId = 2345234;
 
@@ -79,28 +45,7 @@ app.post("/signup", (req, res) => {
       userName: req.body.userName,
       userPass: req.body.userPass,
       userId: userUniqueId,
-      userMsgs: [
-        {
-          messageId: 1,
-          title: "Hello World 1",
-          message: "Lorem, ipsum dolor sit amet consectetur adipisicing elit.",
-        },
-        {
-          messageId: 2,
-          title: "Hello World 2",
-          message: "Lorem, ipsum dolor sit amet consectetur adipisicing elit.",
-        },
-        {
-          messageId: 3,
-          title: "Hello World 3",
-          message: "Lorem, ipsum dolor sit amet consectetur adipisicing elit.",
-        },
-        {
-          messageId: 4,
-          title: "Hello World 4",
-          message: "Lorem, ipsum dolor sit amet consectetur adipisicing elit.",
-        },
-      ],
+      userMsgs: [],
     };
     userUniqueId++;
     usersData.push(newUser);
@@ -112,13 +57,24 @@ app.post("/signup", (req, res) => {
     });
   }
 });
-//logged user
-app.get("/:userId", (req, res) => {
+//logged user & messages
+app.get("/:userId/:page", (req, res) => {
   const userId = parseInt(req.params.userId);
-  console.log(userId);
   const usersInfo = usersData.find((user) => {
     return userId === user.userId;
   });
+  const currentPage = parseInt(req.params.page);
+  const itemsPerPage = 10;
+
+  const startPageIndex = (currentPage - 1) * itemsPerPage;
+  const endPageIndex = currentPage * itemsPerPage - 1;
+
+  const paginatedItems = usersInfo.userMsgs.slice(
+    startPageIndex,
+    endPageIndex + 1
+  );
+
+  const total = Math.ceil(usersInfo.userMsgs.length / itemsPerPage);
 
   if (!usersInfo) {
     res.status(404).json({ error: "No users found!" });
@@ -128,7 +84,8 @@ app.get("/:userId", (req, res) => {
       userid: usersInfo.userId,
       email: usersInfo.userEmail,
       name: usersInfo.userName,
-      messages: usersInfo.userMsgs,
+      messages: paginatedItems,
+      totalPages: total,
     });
   }
 });
@@ -161,7 +118,11 @@ app.post("/:userId/message", (req, res) => {
   });
 
   if (!findUser) {
-    res.status(404).json({ error: "User not found!" });
+    res.status(400).json({ error: "Unauthorized" });
+    return;
+  }
+  if (req.body.title == "" || req.body.message == "") {
+    res.status(400).json({ error: "Please fill in the fields" });
     return;
   } else {
     const newMessage = {
@@ -171,16 +132,14 @@ app.post("/:userId/message", (req, res) => {
     };
     findUser.userMsgs.push(newMessage);
     userMsgId++;
-    res
-      .status(200)
-      .json({ user: findUser.userName, message: findUser.userMsgs });
+    res.status(200).json({ message: "Message added successfully" });
   }
 });
 
 //Update
-app.put("/:userId/:messageId", (req, res) => {
+app.put("/:userId/:messageIndex", (req, res) => {
   const userId = parseInt(req.params.userId);
-  const messageId = parseInt(req.params.messageId);
+  const messageIndex = parseInt(req.params.messageIndex);
 
   const findUser = usersData.find((user) => {
     return user.userId === userId;
@@ -191,29 +150,26 @@ app.put("/:userId/:messageId", (req, res) => {
       error: "User does not exist or has no permission to access this message",
     });
     return;
+  } else if (req.body.title == "" || req.body.message == "") {
+    res.status(404).json({ error: "Please fill in the fields" });
+    return;
   } else {
-    const findMessage = findUser.userMsgs.find((message) => {
-      return message.messageId === messageId;
-    });
-
-    if (!findMessage) {
+    if (messageIndex < 0 || messageIndex >= findUser.userMsgs.length) {
       res.status(404).json({ error: "Message does not exist" });
       return;
     } else {
       const updateTitle = req.body.title;
       const updateMsg = req.body.message;
-      findMessage.title = updateTitle;
-      findMessage.message = updateMsg;
+      findUser.userMsgs[messageIndex].title = updateTitle;
+      findUser.userMsgs[messageIndex].message = updateMsg;
     }
-    res
-      .status(200)
-      .json({ user: findUser.userName, message: findUser.userMsgs });
+    res.status(200).json({ index: messageIndex, message: "Message updated" });
   }
 });
 
-app.delete("/:userId/:messageId", (req, res) => {
+app.delete("/:userId/:messageIndex", (req, res) => {
   const userId = parseInt(req.params.userId);
-  const messageId = parseInt(req.params.messageId);
+  const messageIndex = parseInt(req.params.messageIndex);
 
   const findUser = usersData.find((user) => {
     return user.userId === userId;
@@ -225,19 +181,13 @@ app.delete("/:userId/:messageId", (req, res) => {
         "User does not exist or has no permission to access this message",
     });
   } else {
-    const findMessage = findUser.userMsgs.findIndex((message) => {
-      return message.messageId === messageId;
-    });
-
-    if (findMessage < 0) {
+    if (messageIndex < 0) {
       res.status(404).json({ error: "Message does not exist" });
       return;
     } else {
-      findUser.userMsgs.splice(findMessage, 1);
+      findUser.userMsgs.splice(messageIndex, 1);
     }
-    res
-      .status(200)
-      .json({ user: findUser.userName, message: findUser.userMsgs });
+    res.status(200).json({ message: "Messaged successfully deleted" });
   }
 });
 
