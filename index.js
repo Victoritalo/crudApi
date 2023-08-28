@@ -65,15 +65,12 @@ app.get("/:userId/:page", (req, res) => {
   });
   const currentPage = parseInt(req.params.page);
   const itemsPerPage = 10;
-
   const startPageIndex = (currentPage - 1) * itemsPerPage;
   const endPageIndex = currentPage * itemsPerPage - 1;
-
   const paginatedItems = usersInfo.userMsgs.slice(
     startPageIndex,
     endPageIndex + 1
   );
-
   const total = Math.ceil(usersInfo.userMsgs.length / itemsPerPage);
 
   if (!usersInfo) {
@@ -82,7 +79,6 @@ app.get("/:userId/:page", (req, res) => {
   } else {
     res.status(200).json({
       userid: usersInfo.userId,
-      email: usersInfo.userEmail,
       name: usersInfo.userName,
       messages: paginatedItems,
       totalPages: total,
@@ -137,39 +133,42 @@ app.post("/:userId/message", (req, res) => {
 });
 
 //Update
-app.put("/:userId/:messageIndex", (req, res) => {
+app.put("/:userId/:messageId", (req, res) => {
   const userId = parseInt(req.params.userId);
-  const messageIndex = parseInt(req.params.messageIndex);
+  const messageId = parseInt(req.params.messageId);
 
-  const findUser = usersData.find((user) => {
-    return user.userId === userId;
-  });
+  const findUser = usersData.find((user) => user.userId === userId);
 
   if (!findUser) {
     res.status(404).json({
-      error: "User does not exist or has no permission to access this message",
+      message:
+        "User does not exist or has no permission to access this message",
     });
     return;
   } else if (req.body.title == "" || req.body.message == "") {
-    res.status(404).json({ error: "Please fill in the fields" });
+    res.status(400).json({ error: "Please fill in the fields" });
     return;
   } else {
-    if (messageIndex < 0 || messageIndex >= findUser.userMsgs.length) {
-      res.status(404).json({ error: "Message does not exist" });
+    const findMessage = findUser.userMsgs.find((message) => {
+      return message.messageId === messageId;
+    });
+
+    if (!findMessage) {
+      res.status(404).json({ message: "Message does not exist" });
       return;
     } else {
       const updateTitle = req.body.title;
       const updateMsg = req.body.message;
-      findUser.userMsgs[messageIndex].title = updateTitle;
-      findUser.userMsgs[messageIndex].message = updateMsg;
+      findMessage.title = updateTitle;
+      findMessage.message = updateMsg;
     }
-    res.status(200).json({ index: messageIndex, message: "Message updated" });
+    res.status(200).json({ message: "Message updated successfully" });
   }
 });
 
-app.delete("/:userId/:messageIndex", (req, res) => {
+app.delete("/:userId/:messageId", (req, res) => {
   const userId = parseInt(req.params.userId);
-  const messageIndex = parseInt(req.params.messageIndex);
+  const messageId = parseInt(req.params.messageId);
 
   const findUser = usersData.find((user) => {
     return user.userId === userId;
@@ -181,13 +180,16 @@ app.delete("/:userId/:messageIndex", (req, res) => {
         "User does not exist or has no permission to access this message",
     });
   } else {
-    if (messageIndex < 0) {
+    const findMessage = findUser.userMsgs.findIndex((message) => {
+      return message.messageId === messageId;
+    });
+
+    if (findMessage === -1) {
       res.status(404).json({ error: "Message does not exist" });
-      return;
     } else {
-      findUser.userMsgs.splice(messageIndex, 1);
+      findUser.userMsgs.splice(findMessage, 1);
+      res.status(200).json({ message: "Messaged successfully deleted" });
     }
-    res.status(200).json({ message: "Messaged successfully deleted" });
   }
 });
 
