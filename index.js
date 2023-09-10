@@ -7,7 +7,7 @@ app.use(cors());
 
 const usersData = [];
 let userUniqueId = 999;
-let userMsgId = 2345234;
+let userMsgId = 2345235;
 
 app.get("", (req, res) => {
   const httpResponse =
@@ -45,7 +45,11 @@ app.post("/signup", (req, res) => {
       userName: req.body.userName,
       userPass: req.body.userPass,
       userId: userUniqueId,
-      userMsgs: [],
+      userMsgs: [{
+        "messageId": 2345234,
+        "title": "Welcome!",
+        "message": "Enjoy the experience!"
+    }],
     };
     userUniqueId++;
     usersData.push(newUser);
