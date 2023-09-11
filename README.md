@@ -196,6 +196,6 @@ Essa API foi criada por [Victor Italo](https://github.com/Victoritalo).
 
 ## Licença
 
-BR: Este é um projeto open-source e está disponível sob a [MIT License](LICENSE).<br>
-EN: This project is open-source and available under the [MIT License](LICENSE).<br>
+BR: Este é um projeto open-source e está disponível sob a [MIT License](https://github.com/Victoritalo/crudApi/blob/main/LICENSE).<br>
+EN: This project is open-source and available under the [MIT License](https://github.com/Victoritalo/crudApi/blob/main/LICENSE).<br>
 ## 
