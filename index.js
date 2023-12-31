@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import express from "express";
 import cors from "cors";
 
@@ -6,8 +7,8 @@ app.use(express.json());
 app.use(cors());
 
 const usersData = [];
-let userUniqueId = 999;
-let userMsgId = 2345235;
+let userUniqueId = randomUUID();
+let userMsgId = randomUUID();
 
 app.get("", (req, res) => {
   const httpResponse =
@@ -45,11 +46,13 @@ app.post("/signup", (req, res) => {
       userName: req.body.userName,
       userPass: req.body.userPass,
       userId: userUniqueId,
-      userMsgs: [{
-        "messageId": 2345234,
-        "title": "Welcome!",
-        "message": "Enjoy the experience!"
-    }],
+      userMsgs: [
+        {
+          messageId: 2345234,
+          title: "Welcome!",
+          message: "Enjoy the experience!",
+        },
+      ],
     };
     userUniqueId++;
     usersData.push(newUser);
@@ -200,4 +203,5 @@ app.delete("/:userId/:messageId", (req, res) => {
 app.listen(3000, () => {
   console.log("Connected!");
   console.log("Node API running on port 3000");
+  console.log(userUniqueId);
 });
