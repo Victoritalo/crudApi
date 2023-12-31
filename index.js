@@ -54,7 +54,6 @@ app.post("/signup", (req, res) => {
         },
       ],
     };
-    userUniqueId++;
     usersData.push(newUser);
     res.status(200).json({
       message: "User created successfully!",
@@ -134,7 +133,6 @@ app.post("/:userId/message", (req, res) => {
       message: req.body.message,
     };
     findUser.userMsgs.push(newMessage);
-    userMsgId++;
     res.status(200).json({ message: "Message added successfully" });
   }
 });
