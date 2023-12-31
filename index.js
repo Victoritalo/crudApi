@@ -66,7 +66,7 @@ app.post("/signup", (req, res) => {
 });
 //logged user & messages
 app.get("/:userId/:page", (req, res) => {
-  const userId = parseInt(req.params.userId);
+  const userId = req.params.userId;
   const usersInfo = usersData.find((user) => {
     return userId === user.userId;
   });
@@ -115,7 +115,7 @@ app.post("/login", (req, res) => {
 
 //Create Message
 app.post("/:userId/message", (req, res) => {
-  const userId = parseInt(req.params.userId);
+  const userId = req.params.userId;
   const findUser = usersData.find((user) => {
     return user.userId === userId;
   });
@@ -141,8 +141,8 @@ app.post("/:userId/message", (req, res) => {
 
 //Update
 app.put("/:userId/:messageId", (req, res) => {
-  const userId = parseInt(req.params.userId);
-  const messageId = parseInt(req.params.messageId);
+  const userId = req.params.userId;
+  const messageId = req.params.messageId;
 
   const findUser = usersData.find((user) => user.userId === userId);
 
@@ -174,8 +174,8 @@ app.put("/:userId/:messageId", (req, res) => {
 });
 
 app.delete("/:userId/:messageId", (req, res) => {
-  const userId = parseInt(req.params.userId);
-  const messageId = parseInt(req.params.messageId);
+  const userId = req.params.userId;
+  const messageId = req.params.messageId;
 
   const findUser = usersData.find((user) => {
     return user.userId === userId;
